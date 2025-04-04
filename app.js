@@ -28,16 +28,16 @@ app.use(function (req, res, next) {
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use("/v1", user)
-app.use("/v1", college)
-app.use("/v1", branch)
-app.use("/v1", university)
-app.use("/v1", batch)
-app.use("/v1", course)
-app.use("/v1", courseData)
-app.use("/v1", payment)
-app.use("/v1", testBatch)
-app.use("/v1", slot)
+app.use("/api/v1", user)
+app.use("/api/v1", college)
+app.use("/api/v1", branch)
+app.use("/api/v1", university)
+app.use("/api/v1", batch)
+app.use("/api/v1", course)
+app.use("/api/v1", courseData)
+app.use("/api/v1", payment)
+app.use("/api/v1", testBatch)
+app.use("/api/v1", slot)
 
 app.use(customError)
 
