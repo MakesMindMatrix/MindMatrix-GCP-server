@@ -46,3 +46,13 @@ exports.updateBatch = asyncHandler(async (req, res, next) => {
         updatedBatch,
       });
 })
+
+exports.getTest = asyncHandler(async (_req, res,next) => {
+    const test = 'Staging tested successfully'
+
+    res.status(201).json({
+        success: true,
+        message: "Batch fetched succesfully",
+        test
+      });
+})
