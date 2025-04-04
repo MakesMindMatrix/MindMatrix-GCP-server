@@ -1,0 +1,49 @@
+name: Backend Cloud Run Deployment (Staging)
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Google Cloud Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+      - name: Debug Environment Variables
+        run: |
+          echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}"
+          echo "GCR_REPO_NAME=${{ vars.GCR_REPO_NAME }}"
+
+      - name: Build & Push Docker Image
+        env:
+          IMAGE_NAME: backend-staging
+          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+        run: |
+          docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest -f Dockerfile .
+          docker push asia-south1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest
+
+      - name: Deploy to Cloud Run (Staging)
+        run: |
+          gcloud run deploy second-brain-backend-staging \
+              --image asia-south1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend-staging:latest \
+              --platform managed \
+              --port=8080 \
+              --region us-central1 \
+              --allow-unauthenticated \
+              --set-env-vars "MONGODB_URI=${{ secrets.MONGODB_URI_STAGING }},ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET_STAGING }},ACCESS_TOKEN_EXPIRY=1d,CORS_ORIGIN=https://staging.second-brain.ajayproject.com"
