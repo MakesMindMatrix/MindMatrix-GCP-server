@@ -1,0 +1,111 @@
+const Batch = require('../models/batch.model')
+// Function for generating interlib token
+const interlibToken = async () => {
+    try {
+        const tokenResponse = await fetch('https://mindmatrix.interleap.com/api/external/generate-token', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ client_id: process.env.client_id })
+        })
+        return await tokenResponse.json()
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
+// Fuction get course of a particular user on interlib
+const interlibmyCourse = async (email, token) => {
+    try {
+        const myApiResponse = await fetch(`https://mindmatrix.interleap.com/api/external/student-courses?email=${email}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        const resp = myApiResponse.json()
+        return await resp
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
+// Function for get the report of every course on interlib
+const interlibReportData = async (email, courses, token) => {
+    try {
+        return await Promise.all(
+            courses?.map(async (elm) => {
+                const dataResponse = await fetch('https://learn.interleap.com/api/analytics/reports', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        client_id: process.env.client_id,
+                        batch_id: elm.external_batch_id
+                    })
+                })
+
+                const response = await dataResponse.json()
+                const user = response.data.StudentProgress.filter((elm) => elm.StudentProgress.summary.StudentEmailId === email)
+
+                let total = 0;
+                let completed = 0;
+                user?.length > 0 && user[0].StudentProgress.TopicDetails.map((elm) => {
+                    total = total + elm.totalTasks
+                    completed = completed + elm.tasksStatus.completed
+                })
+                const topic = user[0].StudentProgress.TopicDetails
+                const all_user = response.data.StudentProgress.map((elm) => elm.StudentProgress.summary)
+                const all_user_sorted = all_user.sort((a, b) => b.TotalPercentage - a.TotalPercentage)
+                const position = all_user_sorted.findIndex(elm => elm.StudentEmailId === email)
+
+                const data = {
+                    courseName: response.data.CourseName,
+                    totalTopics: response.data.NumberOfTopics,
+                    completedTopics: user[0].StudentProgress.summary.TopicsCompleted,
+                    progressPercentage: user[0].StudentProgress.summary.TotalPercentage,
+                    totalStudent: response.data.StudentProgress.length,
+                    studentPosition: position + 1,
+                    totalTask: total,
+                    completedTask: completed,
+                    topic
+                }
+                return data
+            })
+        )
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// Function for recommended course acording to their branch and semester
+const interlibRecommendedCourse = async (myCourseResponse, token, branch, semester) => {
+    try {
+        const allCourseResponse = await fetch('https://mindmatrix.interleap.com/api/external/courses', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        const all_course = await allCourseResponse.json()
+        const user = await Batch.find({ branch, semester })
+        const allRecCourse = all_course?.data?.filter((item) => user?.some((recc) => item.external_batch_id === recc.batch_id))
+        const recCourse = allRecCourse?.filter((item) => !myCourseResponse?.data?.some((course) => item.external_batch_id === course.external_batch_id))
+        return recCourse
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// export default interlibToken
+
+module.exports = { interlibToken, interlibmyCourse, interlibReportData, interlibRecommendedCourse }
