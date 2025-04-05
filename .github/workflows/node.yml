@@ -40,7 +40,7 @@ jobs:
 
       - name: Deploy to Cloud Run (Staging)
         run: |
-          gcloud run deploy second-brain-backend-staging \
+          gcloud run deploy mindmatrix-backend-staging \
               --image asia-south1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend-staging:latest \
               --platform managed \
               --port=8080 \
