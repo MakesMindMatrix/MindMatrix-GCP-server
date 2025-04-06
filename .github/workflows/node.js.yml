@@ -42,4 +42,4 @@ jobs:
               --port=8080 \
               --region us-central1 \
               --allow-unauthenticated \
-              --set-env-vars "DB_URI=${{ secrets.DB_URI }},JWT_SECRET=${{secrets.JWT_SECRET}},JWT_EXPIRE=1d,CORS_ORIGIN=https://mindmatrix-frontend-416303935037.asia-south1.run.app"
+              --set-env-vars "DB_URI=${{ secrets.DB_URI }},JWT_SECRET=${{secrets.JWT_SECRET}},JWT_EXPIRE=1d,COOKIE_EXPIRE=${{secrets.COOKIE_EXPIRE}},CORS_ORIGIN=https://mindmatrix-frontend-416303935037.asia-south1.run.app"
