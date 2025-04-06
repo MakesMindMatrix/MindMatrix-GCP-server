@@ -6,6 +6,7 @@ const sendToken = (user, statusCode, res) => {
         expires: new Date(
             Date.now() + cookieExpireDays * 24 * 60 * 60 * 1000
         ),
+        secure: true,
         httpOnly: true,
         sameSite: 'None'
     }
