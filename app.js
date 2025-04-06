@@ -19,6 +19,10 @@ const slot = require('./routes/slot.route')
 app.use(express.json());
 app.use(cookieParser())
 app.use(cors({credentials: true, origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://mindmatrix-frontend-416303935037.asia-south1.run.app"] }))
+app.options('*', cors({
+  origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://mindmatrix-frontend-416303935037.asia-south1.run.app"],
+  credentials: true
+}));
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
