@@ -574,7 +574,7 @@ exports.interlibSSOLogin = asyncHandler(async (req, res, next) => {
     const { email } = req.params
 
     const Endpoint = 'https://mindmatrix.interleap.com/api/authorize'
-    const Client_Id = process.env.client_id
+    const Client_Id = process.env.CLIENT_ID
     const Redirect_URI = 'https://mindmatrix.interleap.com/sso-login'
     const Student_Email_Id = email
 
@@ -593,7 +593,7 @@ exports.enrollStudentOn_InterlibCourse = asyncHandler(async (req, res, next) => 
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ client_id: process.env.client_id })
+        body: JSON.stringify({ client_id: process.env.CLIENT_ID })
     })
 
     const respToken = await tokenResponse.json()
@@ -631,7 +631,7 @@ exports.getStudentCourses_Interlib = asyncHandler(async (req, res, next) => {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ client_id: process.env.client_id })
+        body: JSON.stringify({ client_id: process.env.CLIENT_ID })
     })
 
     const respToken = await tokenResponse.json()
@@ -659,7 +659,7 @@ exports.getAllCourses_Interlib = asyncHandler(async (req, res, next) => {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ client_id: process.env.client_id })
+        body: JSON.stringify({ client_id: process.env.CLIENT_ID })
     })
 
     const respToken = await tokenResponse.json()
@@ -686,7 +686,7 @@ exports.leaderBoardData = asyncHandler(async (req, res, next) => {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ client_id: process.env.client_id })
+        body: JSON.stringify({ client_id: process.env.CLIENT_ID })
     })
 
     const respToken = await tokenResponse.json()
@@ -703,7 +703,7 @@ exports.leaderBoardData = asyncHandler(async (req, res, next) => {
             'Authorization': `Bearer ${respToken.data.token}`
         },
         body: JSON.stringify({
-            client_id: process.env.client_id,
+            client_id: process.env.CLIENT_ID,
             batch_id
         })
     })
@@ -745,7 +745,7 @@ exports.enrolledList_Interlib = asyncHandler(async (req, res, next) => {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ client_id: process.env.client_id })
+        body: JSON.stringify({ client_id: process.env.CLIENT_ID })
     })
 
     const respToken = await tokenResponse.json()
@@ -762,7 +762,7 @@ exports.enrolledList_Interlib = asyncHandler(async (req, res, next) => {
             'Authorization': `Bearer ${respToken.data.token}`
         },
         body: JSON.stringify({
-            client_id: process.env.client_id,
+            client_id: process.env.CLIENT_ID,
             batch_id
         })
     })
