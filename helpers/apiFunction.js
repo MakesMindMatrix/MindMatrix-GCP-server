@@ -10,7 +10,14 @@ const interlibToken = async () => {
             },
             body: JSON.stringify({ client_id: process.env.client_id })
         })
-        return await tokenResponse.json()
+
+        const data = await tokenResponse.json()
+
+        if (!tokenResponse.ok) {
+            throw new Error(data.message || "Failed to fetch token");
+        }
+
+        return data;
     } catch (error) {
         res.status(400).json(error)
     }
