@@ -276,9 +276,11 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 
 // Logout User
 exports.logOut = asyncHandler(async (req, res, next) => {
-    res.cookie("token", null, {
-        expires: new Date(Date.now()),
-        httpOnly: true
+    res.cookie("token", "", {
+        expires: new Date(Date.now(0)),
+        httpOnly: true,
+        secure: true, // 🔥 required if used when setting
+        sameSite: "None" // 🔥 required if used when setting
     })
     res.status(200).json({
         success: true,
