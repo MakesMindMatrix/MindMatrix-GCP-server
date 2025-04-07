@@ -8,7 +8,7 @@ const interlibToken = async () => {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ client_id: process.env.client_id })
+            body: JSON.stringify({ client_id: process.env.CLIENT_ID })
         })
 
         const data = await tokenResponse.json()
@@ -55,7 +55,7 @@ const interlibReportData = async (email, courses, token) => {
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        client_id: process.env.client_id,
+                        client_id: process.env.CLIENT_ID,
                         batch_id: elm.external_batch_id
                     })
                 })
