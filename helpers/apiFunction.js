@@ -19,7 +19,8 @@ const interlibToken = async () => {
 
         return data;
     } catch (error) {
-        res.status(400).json(error)
+        console.error("interlibToken error:", error.message);
+        throw error; // throw to let the controller handle it
     }
 }
 
