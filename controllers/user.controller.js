@@ -30,7 +30,9 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     // Check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        return next(new ErrorHandler("You are already registered", 400))
+        // return next(new ErrorHandler("You are already registered", 400))
+        // return res.redirect('/login')
+        return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
     }
 
     const code = Math.random().toString().substring(2, 8);
@@ -46,6 +48,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     })
 
     sendToken(user, 201, res)
+    
 })
 
 exports.updateUser = asyncHandler(async (req, res, next) => {
@@ -130,125 +133,139 @@ exports.verifyUser = asyncHandler(async (req, res, next) => {
 
 })
 
+exports.deleteUser = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id)
+
+    if (!user) {
+        return next(new ErrorHandler("User not found", 400))
+    }
+    const deletedUser = await User.findByIdAndDelete(req.user.id)
+    res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+        deletedUser
+    })
+})
+
 exports.subscriptionVerifyCreate = asyncHandler(async (req, res, next) => {
-        const url = "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
-    
-        const params = new URLSearchParams();
-        params.append("client_id", 'SU2503231347450136164095');
-        params.append("client_version", "1");
-        params.append("client_secret", '9bb3ff9e-a677-4d48-8970-dc147d0950e4');
-        params.append("grant_type", "client_credentials");
-    
-        const tokenResponse = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: params.toString(),
-        });
-    
-        const token = await tokenResponse.json();
-        const merchantOrderId = crypto.randomBytes(16).toString('hex')
-    
-        const apiResponse = await fetch(`https://api.phonepe.com/apis/pg/checkout/v2/pay`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `O-Bearer ${token.access_token}`
-            },
-            body: JSON.stringify({
-                merchantOrderId,
-                "amount": 100,
-                "expireAfter": 1200,
-                "paymentFlow": {
-                    "type": "PG_CHECKOUT",
-                    "message": "Payment message used for collect requests",
-                    "merchantUrls": {
-                        "redirectUrl": `https://makes.mindmatrix.io/api/v1/status/${merchantOrderId}`
-                    },
-                    "paymentModeConfig": {
-                        "enabledPaymentModes": [
-                            {
-                                "type": "UPI_INTENT"
-                            },
-                            {
-                                "type": "UPI_COLLECT"
-                            },
-                            {
-                                "type": "UPI_QR"
-                            },
-                            {
-                                "type": "NET_BANKING"
-                            },
-                            {
-                                "type": "CARD",
-                                "cardTypes": [
-                                    "DEBIT_CARD",
-                                    "CREDIT_CARD"
-                                ]
-                            }
-                        ],
-                    }
+    const url = "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
+
+    const params = new URLSearchParams();
+    params.append("client_id", 'SU2503231347450136164095');
+    params.append("client_version", "1");
+    params.append("client_secret", '9bb3ff9e-a677-4d48-8970-dc147d0950e4');
+    params.append("grant_type", "client_credentials");
+
+    const tokenResponse = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params.toString(),
+    });
+
+    const token = await tokenResponse.json();
+    const merchantOrderId = crypto.randomBytes(16).toString('hex')
+
+    const apiResponse = await fetch(`https://api.phonepe.com/apis/pg/checkout/v2/pay`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `O-Bearer ${token.access_token}`
+        },
+        body: JSON.stringify({
+            merchantOrderId,
+            "amount": 100,
+            "expireAfter": 1200,
+            "paymentFlow": {
+                "type": "PG_CHECKOUT",
+                "message": "Payment message used for collect requests",
+                "merchantUrls": {
+                    "redirectUrl": `https://makes.mindmatrix.io/api/v1/status/${merchantOrderId}`
+                },
+                "paymentModeConfig": {
+                    "enabledPaymentModes": [
+                        {
+                            "type": "UPI_INTENT"
+                        },
+                        {
+                            "type": "UPI_COLLECT"
+                        },
+                        {
+                            "type": "UPI_QR"
+                        },
+                        {
+                            "type": "NET_BANKING"
+                        },
+                        {
+                            "type": "CARD",
+                            "cardTypes": [
+                                "DEBIT_CARD",
+                                "CREDIT_CARD"
+                            ]
+                        }
+                    ],
                 }
-            })
+            }
         })
-        const response = await apiResponse.json()
-        console.log(response)
-        res.status(200).json({
-            success: true,
-            message: "Payment Data for registration successfully",
-            response,
-            merchantOrderId
-        })
+    })
+    const response = await apiResponse.json()
+    console.log(response)
+    res.status(200).json({
+        success: true,
+        message: "Payment Data for registration successfully",
+        response,
+        merchantOrderId
+    })
 })
 
 exports.subscriptionVerifyStatus = asyncHandler(async (req, res, next) => {
     const params = new URLSearchParams();
-        params.append("client_id", 'SU2503231347450136164095');
-        params.append("client_version", "1");
-        params.append("client_secret", '9bb3ff9e-a677-4d48-8970-dc147d0950e4');
-        params.append("grant_type", "client_credentials");
-    
-        const Id = req.params.id;
-    
-        const url = "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
-    
-        const tokenResponse = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: params.toString(),
-        });
-    
-        const token = await tokenResponse.json();
-    
-        const apiResponse = await fetch(`https://api.phonepe.com/apis/pg/checkout/v2/order/${Id}/status
+    params.append("client_id", 'SU2503231347450136164095');
+    params.append("client_version", "1");
+    params.append("client_secret", '9bb3ff9e-a677-4d48-8970-dc147d0950e4');
+    params.append("grant_type", "client_credentials");
+
+    const Id = req.params.id;
+
+    const url = "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
+
+    const tokenResponse = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params.toString(),
+    });
+
+    const token = await tokenResponse.json();
+
+    const apiResponse = await fetch(`https://api.phonepe.com/apis/pg/checkout/v2/order/${Id}/status
     `, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `O-Bearer ${token.access_token}`
-            }
-        })
-        const response = await apiResponse.json()
-    
-        if (response.state === 'COMPLETED') {
-            const user = await Payment.create({
-                transactionId: response.paymentDetails[0].transactionId,
-                paymentMode: response.paymentDetails[0].paymentMode,
-                maskedAccountNumber: response.paymentDetails[0].instrument.maskedAccountNumber,
-                ifsc: response.paymentDetails[0].instrument.ifsc,
-                accountType: response.paymentDetails[0].instrument.accountType,
-                paymentType: response.paymentDetails[0].rail.type,
-            })
-    
-            res.status(200).json({
-                success: true,
-                message: "Payment Data status for registration",
-                user
-            })
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `O-Bearer ${token.access_token}`
         }
+    })
+    const response = await apiResponse.json()
+
+    if (response.state === 'COMPLETED') {
+        const user = await Payment.create({
+            transactionId: response.paymentDetails[0].transactionId,
+            paymentMode: response.paymentDetails[0].paymentMode,
+            maskedAccountNumber: response.paymentDetails[0].instrument.maskedAccountNumber,
+            ifsc: response.paymentDetails[0].instrument.ifsc,
+            accountType: response.paymentDetails[0].instrument.accountType,
+            paymentType: response.paymentDetails[0].rail.type,
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "Payment Data status for registration",
+            user
+        })
+    }
 })
 
 // Login User
@@ -271,6 +288,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Invalid email or password", 401))
     }
 
+    console.log(user)
     sendToken(user, 200, res)
 })
 
@@ -458,19 +476,19 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
     const startIndex = (page - 1) * limit;
 
     const users = await User.find(query).populate("branch").populate("college").populate("university").populate("payments");
-    
+
     // let payment;
 
     // for(let i = 0; i<=users.length; i++){
     //  let payment = await User.find(query).populate("payments")
-        //  console.log(await Payment.find())
+    //  console.log(await Payment.find())
     // }
-    
+
     const total = await User.find(query).length
     // console.log(payment)
 
     // console.log(usersdata)
-    
+
 
     // if (users.data && users.data.length > 0) {
     //     console.log("called")
