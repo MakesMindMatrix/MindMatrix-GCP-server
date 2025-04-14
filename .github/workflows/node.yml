@@ -23,7 +23,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Configure Docker
-        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
 
       - name: Debug Environment Variables
         run: |
@@ -35,13 +35,13 @@ jobs:
           IMAGE_NAME: backend-staging
           PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
         run: |
-          docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest -f Dockerfile .
-          docker push asia-south1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest
+          docker build -t asia-northeast1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest -f Dockerfile .
+          docker push asia-northeast1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest
 
       - name: Deploy to Cloud Run (Staging)
         run: |
           gcloud run deploy mindmatrix-backend-staging \
-              --image asia-south1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend-staging:latest \
+              --image asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend-staging:latest \
               --platform managed \
               --port=8080 \
               --region us-central1 \
