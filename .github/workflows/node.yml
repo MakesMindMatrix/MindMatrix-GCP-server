@@ -44,6 +44,6 @@ jobs:
               --image asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend-staging:latest \
               --platform managed \
               --port=8080 \
-              --region us-central1 \
+              --region asia-northeast1 \
               --allow-unauthenticated \
               --set-env-vars "MONGODB_URI=${{ secrets.MONGODB_URI_STAGING }},ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET_STAGING }},JWT_EXPIRE=1d,CORS_ORIGIN=https://staging.second-brain.ajayproject.com"

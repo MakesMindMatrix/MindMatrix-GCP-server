@@ -40,6 +40,6 @@ jobs:
               --image asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend:latest \
               --platform managed \
               --port=8080 \
-              --region us-central1 \
+              --region asia-northeast1 \
               --allow-unauthenticated \
               --set-env-vars "DB_URI=${{ secrets.DB_URI }},JWT_SECRET=${{secrets.JWT_SECRET}},JWT_EXPIRE=1d,COOKIE_EXPIRE=${{secrets.COOKIE_EXPIRE}},CLIENT_ID=${{secrets.CLIENT_ID}},SMPT_HOST=${{secrets.SMPT_HOST}},SMPT_PORT=${{secrets.SMPT_PORT}},SMPT_MAIL=${{secrets.SMPT_MAIL}},SMPT_PASSWORD=${{secrets.SMPT_PASSWORD}},CORS_ORIGIN=https://mindmatrix-frontend-416303935037.asia-northeast1.run.app"
