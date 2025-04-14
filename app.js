@@ -22,7 +22,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'https://mindmatrix-frontend-416303935037.asia-south1.run.app',
-  'https://staging.mindmatrix.io/'
+  'https://staging.mindmatrix.io'
 ];
 
 app.use(cors({
