@@ -21,7 +21,7 @@ jobs:
         uses: "google-github-actions/setup-gcloud@v2"
 
       - name: Configure Docker
-        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
       - name: Debug Environment Variables
         run: |
           echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}"
@@ -31,15 +31,15 @@ jobs:
           IMAGE_NAME: backend
           PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
         run: |-
-          docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest -f Dockerfile .
-          docker push asia-south1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest
+          docker build -t asia-northeast1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest -f Dockerfile .
+          docker push asia-northeast1-docker.pkg.dev/$PROJECT_ID/${{ vars.GCR_REPO_NAME }}/$IMAGE_NAME:latest
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy second-brain-backend \
-              --image asia-south1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend:latest \
+              --image asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/backend:latest \
               --platform managed \
               --port=8080 \
               --region us-central1 \
               --allow-unauthenticated \
-              --set-env-vars "DB_URI=${{ secrets.DB_URI }},JWT_SECRET=${{secrets.JWT_SECRET}},JWT_EXPIRE=1d,COOKIE_EXPIRE=${{secrets.COOKIE_EXPIRE}},CLIENT_ID=${{secrets.CLIENT_ID}},SMPT_HOST=${{secrets.SMPT_HOST}},SMPT_PORT=${{secrets.SMPT_PORT}},SMPT_MAIL=${{secrets.SMPT_MAIL}},SMPT_PASSWORD=${{secrets.SMPT_PASSWORD}},CORS_ORIGIN=https://mindmatrix-frontend-416303935037.asia-south1.run.app"
+              --set-env-vars "DB_URI=${{ secrets.DB_URI }},JWT_SECRET=${{secrets.JWT_SECRET}},JWT_EXPIRE=1d,COOKIE_EXPIRE=${{secrets.COOKIE_EXPIRE}},CLIENT_ID=${{secrets.CLIENT_ID}},SMPT_HOST=${{secrets.SMPT_HOST}},SMPT_PORT=${{secrets.SMPT_PORT}},SMPT_MAIL=${{secrets.SMPT_MAIL}},SMPT_PASSWORD=${{secrets.SMPT_PASSWORD}},CORS_ORIGIN=https://mindmatrix-frontend-416303935037.asia-northeast1.run.app"
