@@ -46,9 +46,12 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
             url: 'secure_url'
         }
     })
+    res.status(201).json({
+        success: true,
+        message: "User registered succesfully",
+        user,
+    });
 
-    sendToken(user, 201, res)
-    
 })
 
 exports.updateUser = asyncHandler(async (req, res, next) => {
@@ -95,11 +98,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
     user = updatedUser;
 
-    res.status(201).json({
-        success: true,
-        message: "User updated succesfully",
-        user,
-    });
+    sendToken(user, 201, res)
 })
 
 exports.verifyUser = asyncHandler(async (req, res, next) => {
@@ -287,9 +286,17 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     if (!isPasswordMatched) {
         return next(new ErrorHandler("Invalid email or password", 401))
     }
-
-    console.log(user)
-    sendToken(user, 200, res)
+    if (user?.isverified === true && user?.college !== undefined) {
+        console.log("Generating token")
+        sendToken(user, 200, res)
+    } else {
+        res.status(200).json({
+            success: true,
+            message: "User registered succesfully",
+            user,
+        });
+    }
+    // console.log(user)
 })
 
 // Logout User
