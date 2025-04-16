@@ -287,7 +287,6 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Invalid email or password", 401))
     }
     if (user?.isverified === true && user?.college !== undefined) {
-        console.log("Generating token")
         sendToken(user, 200, res)
     } else {
         res.status(200).json({
