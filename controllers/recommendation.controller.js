@@ -1,21 +1,22 @@
-const TestBatch = require("../models/test_batch.model")
+const Recommendation = require("../models/recommendation.model")
 const ErrorHandler = require('../utils/errorHandler')
 const asyncHandler = require('../middleware/asyncHandler')
 
 // Add TestBatch 
 exports.createTestBatch = asyncHandler(async (req, res, next) => {
-    const { branch, semester, batch_id, course_name } = req.body;
+    const { branch, semester, batch_id, course_name, course_image } = req.body;
 
-    const batch = await TestBatch.create({
+    const batch = await Recommendation.create({
         branch,
         semester,
         batch_id,
-        course_name
+        course_name,
+        course_image
     })
 
     res.status(201).json({
         success: true,
-        message: "TestBatch registered succesfully",
+        message: "Recommendation registered succesfully",
         batch,
     });
 
@@ -23,11 +24,11 @@ exports.createTestBatch = asyncHandler(async (req, res, next) => {
 
 // Get batch 
 exports.getTestBatch = asyncHandler(async (_req, res, next) => {
-    const batch = await TestBatch.find().populate("branch")
+    const batch = await Recommendation.find().populate("branch")
 
     res.status(200).json({
         success: true,
-        message: "TestBatch fetched successfully",
+        message: "Recommendation fetched successfully",
         Batch_count: batch.length,
         batch
     })
@@ -37,11 +38,11 @@ exports.getTestBatch = asyncHandler(async (_req, res, next) => {
 exports.updateTestBatch = asyncHandler(async (req, res, next) => {
     const {branch, semester, batch_id, course_name} = req.body;
 
-    let batch = await TestBatch.findOne({ batch_id })
+    let batch = await Recommendation.findOne({ batch_id })
 
     res.status(201).json({
         success: true,
-        message: "TestBatch updated succesfully",
+        message: "Recommendation updated succesfully",
         batch,
       });
 })

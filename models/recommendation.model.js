@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const testBatchSchema = new mongoose.Schema({
+const recommendationSchema = new mongoose.Schema({
     branch: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -13,10 +13,13 @@ const testBatchSchema = new mongoose.Schema({
     },
     course_name:{
         type: String
+    },
+    course_image: {
+        type: String
     }
 },{
     timestamps: true
 })
 
-const TestBatch = mongoose.model("TestBatch", testBatchSchema)
-module.exports = TestBatch
+const Recommendation = mongoose.model("Recommendation", recommendationSchema)
+module.exports = Recommendation
