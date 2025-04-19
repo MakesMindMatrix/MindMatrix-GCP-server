@@ -1,4 +1,5 @@
 const Batch = require('../models/batch.model')
+const Recommendation = require('../models/recommendation.model')
 // Function for generating interlib token
 const interlibToken = async () => {
     try {
@@ -105,9 +106,19 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
             }
         })
         const all_course = await allCourseResponse.json()
-        const user = await Batch.find({ branch, semester })
+        const user = await Recommendation.find({ branch, semester })
         const allRecCourse = all_course?.data?.filter((item) => user?.some((recc) => item.external_batch_id === recc.batch_id))
-        const recCourse = allRecCourse?.filter((item) => !myCourseResponse?.data?.some((course) => item.external_batch_id === course.external_batch_id))
+        const recCourse = allRecCourse?.filter((item) => !myCourseResponse?.data?.some((course) => item.external_batch_id === course.external_batch_id)).map((course) => {
+            // Find the corresponding recommendation for the course
+            const matchedRec = user.find(recc => recc.batch_id === course.external_batch_id);
+            return {
+                ...course,
+                image: matchedRec?.course_image || null // attach the image if available
+            };
+        });
+    
+        
+        console.log(user)
         return recCourse
     } catch (error) {
         console.log(error)
