@@ -117,8 +117,7 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
             };
         });
     
-        
-        console.log(user)
+    
         return recCourse
     } catch (error) {
         console.log(error)
