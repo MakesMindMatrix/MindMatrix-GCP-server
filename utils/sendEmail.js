@@ -24,3 +24,6 @@ const sendEmail = async (options) => {
 };
 
 module.exports = sendEmail;
+
+// SMTP_MAIL=mindmatrix@clinf.com
+// SMTP_PASSWORD=MindMatrix@234
