@@ -3,8 +3,8 @@ const nodeMailer = require("nodemailer");
 const sendEmail = async (options) => {
 
   const transporter = nodeMailer.createTransport({
-    host: process.env.SMPT_HOST,
-    port: process.env.SMPT_PORT,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
     service: "gmail",
     secure: true,
     auth: {
@@ -14,7 +14,7 @@ const sendEmail = async (options) => {
   });
 
   const mailOptions = {
-    from: process.env.SMPT_MAIL,
+    from: process.env.SMTP_SLOT_MAIL,
     to: options.email,
     subject: options.subject,
     text: options.message,
@@ -24,3 +24,6 @@ const sendEmail = async (options) => {
 };
 
 module.exports = sendEmail;
+
+// SMTP_MAIL=mindmatrix@clinf.com
+// SMTP_PASSWORD=MindMatrix@234
