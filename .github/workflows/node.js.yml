@@ -42,4 +42,4 @@ jobs:
               --port=8080 \
               --region asia-northeast1 \
               --allow-unauthenticated \
-              --set-env-vars "DB_URI=${{ secrets.DB_URI }},JWT_SECRET=${{secrets.JWT_SECRET}},JWT_EXPIRE=1d,COOKIE_EXPIRE=${{secrets.COOKIE_EXPIRE}},CLIENT_ID=${{secrets.CLIENT_ID}},SMPT_HOST=${{secrets.SMPT_HOST}},SMPT_PORT=${{secrets.SMPT_PORT}},SMPT_MAIL=${{secrets.SMPT_MAIL}},SMPT_PASSWORD=${{secrets.SMPT_PASSWORD}},SMPT_SLOT_MAIL=${{secrets.SMPT_SLOT_MAIL}},SMPT_SLOT_PASSWORD=${{secrets.SMPT_SLOT_PASSWORD}},CORS_ORIGIN=https://makes.mindmatrix.io/"
+              --set-env-vars "DB_URI=${{ secrets.DB_URI }},JWT_SECRET=${{secrets.JWT_SECRET}},JWT_EXPIRE=1d,COOKIE_EXPIRE=${{secrets.COOKIE_EXPIRE}},CLIENT_ID=${{secrets.CLIENT_ID}},SMTP_HOST=${{secrets.SMTP_HOST}},SMTP_PORT=${{secrets.SMTP_PORT}},SMTP_MAIL=${{secrets.SMTP_MAIL}},SMTP_PASSWORD=${{secrets.SMTP_PASSWORD}},SMTP_SLOT_MAIL=${{secrets.SMTP_SLOT_MAIL}},SMTP_SLOT_PASSWORD=${{secrets.SMTP_SLOT_PASSWORD}},CORS_ORIGIN=https://makes.mindmatrix.io/"
