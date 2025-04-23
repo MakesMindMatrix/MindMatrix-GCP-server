@@ -378,13 +378,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => { })
 exports.verifyCode = asyncHandler(async (req, res, next) => {
     const { email, secretCode, name } = req.body;
 
-    const message = `Hello ${name} 
-      
-Thank you for registering with MindMatrix. Please enter the following 6-digit code to verify your email address: ${secretCode}.
-
-      Happy learning!
-      
-      Team MindMatrix`
+    const message = `Hello ${name},\n\nThank you for registering with MindMatrix. Please enter the following 6-digit code to verify your email address: ${secretCode}.\n\nHappy learning!\n\nTeam MindMatrix`;
 
     try {
         await sendEmail({
