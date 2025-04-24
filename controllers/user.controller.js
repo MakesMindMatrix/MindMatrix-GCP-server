@@ -7,6 +7,8 @@ const sendToken = require('../utils/jwtToken')
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const sendEmailHTML = require('../utils/sendEmailHTML');
+const axios = require('axios')
+
 
 // Register User
 exports.registerUser = asyncHandler(async (req, res, next) => {
