@@ -353,7 +353,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 // Login with google
 exports.loginWithGoogle = asyncHandler(async (req, res, next) => {
     const redirectUri = `${process.env.BASE_URL}/api/v1/google/login/callback`;
-    
+
     const scope = [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -395,9 +395,11 @@ exports.loginWithGoogleData = asyncHandler(async (req, res, next) => {
             expires: new Date(
                 Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
             ),
-            httpOnly: true
+            secure: true,
+            httpOnly: true,
+            sameSite: 'None'
         }
-    
+
         res.cookie('token', token, options)
 
         res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
