@@ -59,7 +59,8 @@ const courseInfoSchema = new mongoose.Schema(
 
         about_section: {
             title:String,
-            description: String
+            description: String,
+            about_details: [String]
         },
 
         prerequisite_section:{
