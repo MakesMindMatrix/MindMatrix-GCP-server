@@ -98,7 +98,7 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
         let existingUser = await User.findOne({ email })
 
         if (existingUser) {
-            return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
+            return res.redirect(`${process.env.CLIENT_BASE_URL}/onboarding`)
         }
 
         const user = await User.create({
@@ -124,7 +124,7 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
 
         res.cookie('token', token, options)
 
-        res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
+        res.redirect(`${process.env.CLIENT_BASE_URL}/onboarding`)
     } catch (error) {
         console.log(error)
     }
