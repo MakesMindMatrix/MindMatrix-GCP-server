@@ -95,11 +95,36 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
 
         const { id, email, name, picture } = userInfo.data
         console.log(id, email, name)
-        let user = await User.findOne({ email })
+        let existingUser = await User.findOne({ email })
 
-        if (user) {
+        if (existingUser) {
             return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
         }
+
+        const user = await User.create({
+            name,
+            email,
+            isverified: true,
+            password: "12345678",
+            avatar: {
+                public_id: 'public_id',
+                url: 'secure_url'
+            }
+        })
+
+
+        const token = user.getJWTToken(user._id)
+
+        const options = {
+            expires: new Date(
+                Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+            ),
+            httpOnly: true
+        }
+
+        res.cookie('token', token, options)
+
+        res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
     } catch (error) {
         console.log(error)
     }
