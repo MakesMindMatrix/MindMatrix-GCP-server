@@ -96,7 +96,7 @@ const interlibReportData = async (email, courses, token) => {
 }
 
 // Function for recommended course acording to their branch and semester
-const interlibRecommendedCourse = async (myCourseResponse, token, branch, semester) => {
+const interlibRecommendedCourse = async (myCourseResponse, token, branch, semester,college) => {
     try {
         const allCourseResponse = await fetch('https://mindmatrix.interleap.com/api/external/courses', {
             method: 'GET',
@@ -106,8 +106,8 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                 'Authorization': `Bearer ${token}`
             }
         })
-        const all_course = await allCourseResponse.json()
 
+        const all_course = await allCourseResponse.json()
         const course_branch = branch
         const course_semester = semester
         const rec_courses = await CourseInfo.find({ course_branch, course_semester })
