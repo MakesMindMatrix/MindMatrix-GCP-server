@@ -48,7 +48,8 @@ exports.getCourseInfobyBatchId = asyncHandler(async (req, res, next) => {
     try {
         const course = await CourseInfo.findOne({ batch_id: req.params.batch_id })
             .populate('course_university')
-            .populate('course_college');
+            .populate('course_college')
+            .populate('course_branch');
         if (!course) {
             return res.status(404).json({ 
                 success: false,

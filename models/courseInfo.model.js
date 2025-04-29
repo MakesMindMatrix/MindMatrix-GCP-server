@@ -57,23 +57,26 @@ const courseInfoSchema = new mongoose.Schema(
             }
         },
 
-        about_section: {
-            title:String,
-            description: String,
-            about_details: [String]
+        // about_section: {
+        //     title:String,
+        //     description: String,
+        //     about_details: [String]
+        // },
+        what_you_get_section: {
+            points: [String]
         },
+    
 
         prerequisite_section:{
-            description: String
+            points: [String]
         },
 
         outcome_section: {
-            description: String   
+            points: [String]   
         },
 
         elective_course_section: {
-            title: String,
-            description: String
+            cards: [String]
         },
 
         instructor_section: {
@@ -86,6 +89,16 @@ const courseInfoSchema = new mongoose.Schema(
         curriculum_section: {
             modules: [moduleSchema],
             curriculum_image: String
+        },
+
+        motivation_section: {
+            quote: String,
+            button_content: String,
+            button_type: {
+                type: String,
+                enum: ['free', 'paid'],
+                default: 'free'
+            }
         }
     },
     {
