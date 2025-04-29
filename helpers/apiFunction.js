@@ -1,5 +1,6 @@
 const Batch = require('../models/batch.model')
-const Recommendation = require('../models/recommendation.model')
+// const Recommendation = require('../models/recommendation.model')
+const CourseInfo = require('../models/courseInfo.model')
 // Function for generating interlib token
 const interlibToken = async () => {
     try {
@@ -97,17 +98,6 @@ const interlibReportData = async (email, courses, token) => {
 // Function for recommended course acording to their branch and semester
 const interlibRecommendedCourse = async (myCourseResponse, token, branch, semester,college) => {
     try {
-
-        //Temp hard code for Workshop - 29th April, 2025
-        const COLLEGE_BATCH_MAP = {
-            "6802455e7ba88e506ba3e544": "GENAIWPCHALL2501", //Government Engineering College (GEC) – Challakere
-            "680245897ba88e506ba3e54c": "GENAIWPGANGA2501", //Government Engineering College (GEC) – Gangavathi, Koppal
-            "680246887ba88e506ba3e56c": "GENAIWPRAICH2501", // Government Engineering College (GEC) – Raichur
-            "658d13f3f7a2a7912fde9369": "GENAIWPCHALL2501", // GOVT. ENGINEERING COLLEGE RAMNAGAR
-            "680246ad7ba88e506ba3e574": "GENAIWPCHALL2501", // Government Engineering College (GEC) - Ramnagar
-        };
-
-
         const allCourseResponse = await fetch('https://mindmatrix.interleap.com/api/external/courses', {
             method: 'GET',
             headers: {
@@ -116,28 +106,20 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                 'Authorization': `Bearer ${token}`
             }
         })
-        const all_course = await allCourseResponse.json();
-        const batchId = COLLEGE_BATCH_MAP[college];
 
-        if(batchId){
-            const rec_course = all_course?.data?.filter((item) => item.external_batch_id === batchId)?.map((course) => ({
-                ...course,
-                image: "https://res.cloudinary.com/djsg8kbaz/image/upload/v1745032671/Multimodality_khbxkc.png" // Direct image URL
-            }));
-            return rec_course
-        } 
-        const user = await Recommendation.find({ branch, semester })
-        const allRecCourse = all_course?.data?.filter((item) => user?.some((recc) => item.external_batch_id === recc.batch_id))
+        const all_course = await allCourseResponse.json()
+        const course_branch = branch
+        const course_semester = semester
+        const rec_courses = await CourseInfo.find({ course_branch, course_semester })
+        const allRecCourse = all_course?.data?.filter((item) => rec_courses?.some((recc) => item.external_batch_id === recc.batch_id))
         const recCourse = allRecCourse?.filter((item) => !myCourseResponse?.data?.some((course) => item.external_batch_id === course.external_batch_id)).map((course) => {
             // Find the corresponding recommendation for the course
-            const matchedRec = user.find(recc => recc.batch_id === course.external_batch_id);
+            const matchedRec = rec_courses.find(recc => recc.batch_id === course.external_batch_id);
             return {
                 ...course,
-                image: matchedRec?.course_image || null // attach the image if available
+                image: matchedRec?.course_card_image || null // attach the image if available
             };
-        });
-    
-    
+        });    
         return recCourse
     } catch (error) {
         console.log(error)
