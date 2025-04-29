@@ -102,7 +102,8 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
         const COLLEGE_BATCH_MAP = {
             "6802455e7ba88e506ba3e544": "GENAIWPCHALL2501", //Government Engineering College (GEC) – Challakere
             "680245897ba88e506ba3e54c": "GENAIWPGANGA2501", //Government Engineering College (GEC) – Gangavathi, Koppal
-            "680246887ba88e506ba3e56c": "GENAIWPRAICH2501" // Government Engineering College (GEC) – Raichur
+            "680246887ba88e506ba3e56c": "GENAIWPRAICH2501", // Government Engineering College (GEC) – Raichur
+            "658d13f3f7a2a7912fde9369": "GENAIWPCHALL2501", // GEC Ramnagar
         };
 
 
