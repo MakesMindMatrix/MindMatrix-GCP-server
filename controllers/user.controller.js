@@ -124,7 +124,7 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
 
         res.cookie('token', token, options)
 
-        res.redirect(`${process.env.CLIENT_BASE_URL}/onboarding`)
+        res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
     } catch (error) {
         console.log(error)
     }
