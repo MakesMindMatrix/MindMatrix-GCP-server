@@ -114,7 +114,16 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                 'Authorization': `Bearer ${token}`
             }
         })
-        const all_course = await allCourseResponse.json()
+        const all_course = await allCourseResponse.json();
+        const batchId = COLLEGE_BATCH_MAP[college];
+
+        if(batchId){
+            const rec_course = all_course?.data?.filter((item) => item.external_batch_id === batchId)?.map((course) => ({
+                ...course,
+                image: "https://res.cloudinary.com/djsg8kbaz/image/upload/v1745032671/Multimodality_khbxkc.png" // Direct image URL
+            }));
+            return rec_course
+        } 
         const user = await Recommendation.find({ branch, semester })
         const allRecCourse = all_course?.data?.filter((item) => user?.some((recc) => item.external_batch_id === recc.batch_id))
         const recCourse = allRecCourse?.filter((item) => !myCourseResponse?.data?.some((course) => item.external_batch_id === course.external_batch_id)).map((course) => {
