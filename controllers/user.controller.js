@@ -7,6 +7,8 @@ const sendToken = require('../utils/jwtToken')
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const sendEmailHTML = require('../utils/sendEmailHTML');
+const axios = require('axios')
+
 
 // Register User
 exports.registerUser = asyncHandler(async (req, res, next) => {
@@ -35,8 +37,8 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
         return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
     }
 
-    const code = Math.random().toString().substring(2, 8);
-    // const code = 123456;
+    // const code = Math.random().toString().substring(2, 8);
+    const code = 123456;
     const user = await User.create({
         name,
         email,
@@ -54,6 +56,80 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     });
 
 })
+
+// Register with google
+exports.registerWithGoogle = asyncHandler(async (req, res, next) => {
+    const redirectUri = `${process.env.BASE_URL}/api/v1/google/register/callback`;
+    const scope = [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+    ].join(' ');
+
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+
+    res.redirect(authUrl);
+})
+
+// Registration data collection with google
+exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
+    try {
+        const code = req.query.code
+
+
+        const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, {
+            params: {
+                code,
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                redirect_uri: `${process.env.BASE_URL}/api/v1/google/register/callback`,
+                grant_type: 'authorization_code',
+            }
+        })
+        console.log("Register Called")
+
+        const accessToken = tokenResponse.data.access_token
+
+        const userInfo = await axios.get(
+            `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`
+        )
+
+        const { id, email, name, picture } = userInfo.data
+        console.log(id, email, name)
+        let existingUser = await User.findOne({ email })
+
+        if (existingUser) {
+            return res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
+        }
+
+        const user = await User.create({
+            name,
+            email,
+            isverified: true,
+            password: "12345678",
+            avatar: {
+                public_id: 'public_id',
+                url: 'secure_url'
+            }
+        })
+
+
+        const token = user.getJWTToken(user._id)
+
+        const options = {
+            expires: new Date(
+                Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+            ),
+            httpOnly: true
+        }
+
+        res.cookie('token', token, options)
+
+        res.redirect(`${process.env.CLIENT_BASE_URL}/onboarding`)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 
 exports.updateUser = asyncHandler(async (req, res, next) => {
     // Collect all the information from user
@@ -297,6 +373,65 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
         });
     }
     // console.log(user)
+})
+
+// Login with google
+exports.loginWithGoogle = asyncHandler(async (req, res, next) => {
+    const redirectUri = `${process.env.BASE_URL}/api/v1/google/login/callback`;
+
+    const scope = [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+    ].join(' ');
+
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+
+    res.redirect(authUrl);
+})
+
+// Login data verification with google
+exports.loginWithGoogleData = asyncHandler(async (req, res, next) => {
+
+    const code = req.query.code;
+
+    try {
+        const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, {
+            params: {
+                code,
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                redirect_uri: `${process.env.BASE_URL}/api/v1/google/login/callback`,
+                grant_type: 'authorization_code',
+            },
+        });
+
+        const accessToken = tokenResponse.data.access_token;
+
+        const userInfo = await axios.get(
+            `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`
+        );
+
+        const { email } = userInfo.data;
+
+        const user = await User.findOne({ email });
+        const token = user.getJWTToken(user._id)
+
+        const options = {
+            expires: new Date(
+                Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+            ),
+            secure: true,
+            httpOnly: true,
+            sameSite: 'None'
+        }
+
+        res.cookie('token', token, options)
+
+        res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
+        // res.redirect("http://localhost:3000/login")
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 // Logout User
