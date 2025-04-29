@@ -37,8 +37,8 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
         return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
     }
 
-    const code = Math.random().toString().substring(2, 8);
-    // const code = 123456;
+    // const code = Math.random().toString().substring(2, 8);
+    const code = 123456;
     const user = await User.create({
         name,
         email,
