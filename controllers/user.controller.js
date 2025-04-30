@@ -75,7 +75,6 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
     try {
         const code = req.query.code
 
-
         const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, {
             params: {
                 code,
@@ -98,7 +97,7 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
         let existingUser = await User.findOne({ email })
 
         if (existingUser) {
-            return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
+            return res.redirect(`${process.env.CLIENT_BASE_URL}/onboarding`)
         }
 
         const user = await User.create({
@@ -378,7 +377,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 // Login with google
 exports.loginWithGoogle = asyncHandler(async (req, res, next) => {
     const redirectUri = `${process.env.BASE_URL}/api/v1/google/login/callback`;
-
+    // console.log(redirectUri)
     const scope = [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -404,7 +403,7 @@ exports.loginWithGoogleData = asyncHandler(async (req, res, next) => {
                 grant_type: 'authorization_code',
             },
         });
-
+        console.log(process.env.BASE_URL)
         const accessToken = tokenResponse.data.access_token;
 
         const userInfo = await axios.get(
@@ -478,9 +477,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${req.protocol}://${req.get(
-        "host"
-    )}/password/reset/${resetToken}`;
+    const resetPasswordUrl = `${process.env.CLIENT_BASE_URL}/password/reset/${resetToken}`;
 
     const message = `Dear Student \n\n We received a request to reset your password for your MindMatrix account. \n\n To reset your password, please click the link below: \n\n ${resetPasswordUrl} \n\n If you did not request this reset, please ignore this email. \n\n Best regards, \n Team MindMatrix`;
     // const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
