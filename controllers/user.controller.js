@@ -119,11 +119,13 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
             expires: new Date(
                 Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
             ),
-            httpOnly: true
+            secure: true,
+            httpOnly: true,
+            sameSite: 'None'
         }
 
         res.cookie('token', token, options)
-
+        
         res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
     } catch (error) {
         console.log(error)
