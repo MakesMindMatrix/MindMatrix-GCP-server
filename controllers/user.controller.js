@@ -414,7 +414,9 @@ exports.loginWithGoogleData = asyncHandler(async (req, res, next) => {
         );
 
         const { email } = userInfo.data;
-
+        if (!user) {
+            return res.redirect(`${process.env.CLIENT_BASE_URL}/register`)
+        }
         const user = await User.findOne({ email });
         const token = user.getJWTToken(user._id)
 
