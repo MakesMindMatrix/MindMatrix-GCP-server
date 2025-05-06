@@ -98,7 +98,7 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
         let existingUser = await User.findOne({ email })
 
         if (existingUser) {
-            return res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
+            return res.redirect(`${process.env.CLIENT_BASE_URL}/login?msg=user_exists`)
         }
 
         const user = await User.create({
