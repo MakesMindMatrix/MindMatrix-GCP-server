@@ -416,7 +416,7 @@ exports.loginWithGoogleData = asyncHandler(async (req, res, next) => {
         const { email } = userInfo.data;
         const user = await User.findOne({ email });
         if (!user) {
-            return res.redirect(`${process.env.CLIENT_BASE_URL}/register`)
+            return res.redirect(`${process.env.CLIENT_BASE_URL}/register?msg=user_not_found`);
         }
         const token = user.getJWTToken(user._id)
 
