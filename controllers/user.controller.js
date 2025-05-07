@@ -205,7 +205,7 @@ exports.verifyUser = asyncHandler(async (req, res, next) => {
     } else {
         res.status(200).json({
             success: false,
-            message: "Secret doesn't matched",
+            message: "Secret does not match",
         });
     }
 
