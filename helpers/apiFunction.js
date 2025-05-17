@@ -192,7 +192,12 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
             }).then(response => response.json()),
             // Use projection to fetch only needed fields
             CourseInfo.find(
-                { course_college: college, course_branch: branch, course_semester: semester },
+                { course_branch: branch, course_semester: semester,
+                  $or: [
+                    { course_college: {$size: 0} },
+                    { course_college: college }
+                  ]
+                 },
                 { batch_id: 1, course_card_image: 1, _id: 0 })
         ]);
 
