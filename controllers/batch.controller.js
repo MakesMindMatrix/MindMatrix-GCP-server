@@ -11,7 +11,7 @@ exports.createBatch = asyncHandler(async (req, res, next) => {
         semester,
         batch_id
     })
-    console.log(batch)
+
     res.status(201).json({
         success: true,
         message: "Batch registered succesfully",
