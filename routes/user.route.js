@@ -17,7 +17,7 @@ router.route("/password/reset/:token").put(resetPassword);
 router.route("/verifyUser").post(verifyUser);
 router.route("/sendCode").post(verifyCode);
 router.route("/invitation").post(sendInvitationMail);
-router.route("/user").get(getSingleUser);
+router.route("/user/:id").get(getSingleUser);
 
 // Admin Routes
 router.route("/get-all-users").get(getAllUser);

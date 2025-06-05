@@ -117,3 +117,21 @@ userSchema.methods.getResetPasswordToken = function () {
 
 const User = mongoose.model("User", userSchema)
 module.exports = User
+
+
+// Company DNA
+
+
+
+// Industry name
+// Roles - 
+// Technical skills
+// Culture traits
+
+
+
+// Job Details
+
+
+// Job Name
+// 

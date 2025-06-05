@@ -14,7 +14,7 @@ const mongoose = require('mongoose')
 const moduleSchema = new mongoose.Schema({
     title: {
       type: String,
-      required: true
+    //   required: true
     },
     description: String
   });
@@ -23,6 +23,9 @@ const courseInfoSchema = new mongoose.Schema(
     {   
         //Unique course id
         batch_id: String,
+
+        //Batch price of the course
+        batch_price: Number,
 
         //For Course cards
         course_name: String,
