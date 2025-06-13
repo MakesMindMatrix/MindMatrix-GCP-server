@@ -16,6 +16,7 @@ const courseInfo = require('./routes/courseInfo.route')
 const payment = require('./routes/payment.route')
 const slot = require('./routes/slot.route')
 const userInterest = require('./routes/userInterest.route')
+const collegeSubscription = require('./routes/collegeSubscription.route')
 
 app.use(express.json());
 app.use(cookieParser())
@@ -61,6 +62,7 @@ app.use("/api/v1", payment)
 app.use("/api/v1", Recommendation)
 app.use("/api/v1", slot)
 app.use("/api/v1", userInterest)
+app.use("/api/v1", collegeSubscription)
 
 app.use(customError)
 

@@ -65,7 +65,14 @@ const userSchema = new mongoose.Schema({
     semester: Number,
     secret: Number,
     resetPasswordToken: String,
-    resetPasswordExpire: Date
+    resetPasswordExpire: Date,
+
+    // Fields for college
+    collegeName: String,
+    collegePersonDesignation: String,
+    personOfContactName: String,
+    personOfContactNumber: Number,
+    personOfContactDesignation: String,
 },{
     timestamps: true,
 })
