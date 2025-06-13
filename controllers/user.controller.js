@@ -125,7 +125,7 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
         }
 
         res.cookie('token', token, options)
-        
+
         res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
     } catch (error) {
         console.log(error)
@@ -482,9 +482,9 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${req.protocol}://${req.get(
-        "host"
-    )}/password/reset/${resetToken}`;
+    const resetPasswordUrl = `${process.env.CLIENT_BASE_URL}/password/reset/${resetToken}`;
+
+    console.log(`${process.env.CLIENT_BASE_URL}/password/reset/${resetToken}`)
 
     const message = `Dear Student \n\n We received a request to reset your password for your MindMatrix account. \n\n To reset your password, please click the link below: \n\n ${resetPasswordUrl} \n\n If you did not request this reset, please ignore this email. \n\n Best regards, \n Team MindMatrix`;
     // const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
@@ -615,7 +615,12 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
 
     const startIndex = (page - 1) * limit;
 
-    const users = await User.find(query).populate("branch").populate("college").populate("university").populate("payments");
+    const users = await User.find({
+        createdAt: {
+            $gte: new Date('2025-06-05T00:00:00.000Z'),
+            $lt: new Date('2025-06-12T00:00:00.000Z')
+        }
+    }).populate("branch").populate("college").populate("university").populate("payments");
 
     // let payment;
 
@@ -623,6 +628,31 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
     //  let payment = await User.find(query).populate("payments")
     //  console.log(await Payment.find())
     // }
+    const filterData = users?.map((elm) => {
+        const date = new Date(elm.createdAt)
+        const readable = date.toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata", // Convert to IST
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+        });
+        const data = {
+            'Name': elm?.name,
+            'Email': elm?.email,
+            'Branch': elm?.branch?.name,
+            'Semester': elm?.semester,
+            'Mobile': elm?.phone,
+            'Date': readable,
+            'College': elm?.college?.name,
+            'Payment': elm.payment
+        }
+
+        return data
+    })
 
     const total = await User.find(query).length
     // console.log(payment)
@@ -653,7 +683,7 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
         limit,
         total,
         pages: Math.ceil(total / limit),
-        data: users
+        data: filterData
     })
 })
 
