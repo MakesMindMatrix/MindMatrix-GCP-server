@@ -21,7 +21,7 @@ exports.createCollegeSubscription = asyncHandler(async (req, res) => {
 })
 
 // Read all document for company DNA
-exports.getAllCollegeSubscriptionModel = asyncHandler(async (req, res) => {
+exports.getAllCollegeSubscription = asyncHandler(async (req, res) => {
     const collegeSubscription = await CollegeSubscription.find()
 
     res.status(200).json({
