@@ -12,23 +12,20 @@ const axios = require('axios')
 
 // Register User
 exports.registerUser = asyncHandler(async (req, res, next) => {
-    // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-    //     folder: "avatars",
-    //     width: 150,
-    //     crop: "scale"
-    // })
-    const { name, email, password } = req.body;
+    // const { name, email, password } = req.body;
+    const userDetail = req.body
+    // console.log(userDetail)
 
     if (
         !(
-            name &&
-            email &&
-            password
+            userDetail.name &&
+            userDetail.email
         )
     ) {
         return next(new ErrorHandler("All fields are required", 400))
     }
 
+    const email = userDetail.email
     // Check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -37,18 +34,15 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
         return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
     }
 
-    // const code = Math.random().toString().substring(2, 8);
-    const code = 123456;
-    const user = await User.create({
-        name,
-        email,
-        secret: code,
-        password,
-        avatar: {
-            public_id: 'public_id',
-            url: 'secure_url'
-        }
-    })
+    const code = Math.random().toString().substring(2, 8);
+    userDetail.secret = code
+    // console.log(userDetail)
+    // const courseInfo = new CourseInfo(req.body);
+    // const savedCourseInfo = await courseInfo.save();
+    const userData = new User(userDetail)
+    const user = await userData.save()
+    // console.log("user-data", userData)
+    // console.log("user", user)
     res.status(201).json({
         success: true,
         message: "User registered succesfully",
