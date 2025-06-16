@@ -12,23 +12,20 @@ const axios = require('axios')
 
 // Register User
 exports.registerUser = asyncHandler(async (req, res, next) => {
-    // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-    //     folder: "avatars",
-    //     width: 150,
-    //     crop: "scale"
-    // })
-    const { name, email, password } = req.body;
+    // const { name, email, password } = req.body;
+    const userDetail = req.body
+    // console.log(userDetail)
 
     if (
         !(
-            name &&
-            email &&
-            password
+            userDetail.name &&
+            userDetail.email
         )
     ) {
         return next(new ErrorHandler("All fields are required", 400))
     }
 
+    const email = userDetail.email
     // Check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -37,18 +34,15 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
         return res.status(409).json({ success: false, redirect: true, message: "You are already registered please login" });
     }
 
-    // const code = Math.random().toString().substring(2, 8);
-    const code = 123456;
-    const user = await User.create({
-        name,
-        email,
-        secret: code,
-        password,
-        avatar: {
-            public_id: 'public_id',
-            url: 'secure_url'
-        }
-    })
+    const code = Math.random().toString().substring(2, 8);
+    userDetail.secret = code
+    // console.log(userDetail)
+    // const courseInfo = new CourseInfo(req.body);
+    // const savedCourseInfo = await courseInfo.save();
+    const userData = new User(userDetail)
+    const user = await userData.save()
+    // console.log("user-data", userData)
+    // console.log("user", user)
     res.status(201).json({
         success: true,
         message: "User registered succesfully",
@@ -125,7 +119,7 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
         }
 
         res.cookie('token', token, options)
-        
+
         res.redirect(`${process.env.CLIENT_BASE_URL}/login`)
     } catch (error) {
         console.log(error)
@@ -482,9 +476,9 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${req.protocol}://${req.get(
-        "host"
-    )}/password/reset/${resetToken}`;
+    const resetPasswordUrl = `${process.env.CLIENT_BASE_URL}/password/reset/${resetToken}`;
+
+    console.log(`${process.env.CLIENT_BASE_URL}/password/reset/${resetToken}`)
 
     const message = `Dear Student \n\n We received a request to reset your password for your MindMatrix account. \n\n To reset your password, please click the link below: \n\n ${resetPasswordUrl} \n\n If you did not request this reset, please ignore this email. \n\n Best regards, \n Team MindMatrix`;
     // const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
@@ -615,7 +609,12 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
 
     const startIndex = (page - 1) * limit;
 
-    const users = await User.find(query).populate("branch").populate("college").populate("university").populate("payments");
+    const users = await User.find({
+        createdAt: {
+            $gte: new Date('2025-06-05T00:00:00.000Z'),
+            $lt: new Date('2025-06-12T00:00:00.000Z')
+        }
+    }).populate("branch").populate("college").populate("university").populate("payments");
 
     // let payment;
 
@@ -623,6 +622,31 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
     //  let payment = await User.find(query).populate("payments")
     //  console.log(await Payment.find())
     // }
+    const filterData = users?.map((elm) => {
+        const date = new Date(elm.createdAt)
+        const readable = date.toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata", // Convert to IST
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+        });
+        const data = {
+            'Name': elm?.name,
+            'Email': elm?.email,
+            'Branch': elm?.branch?.name,
+            'Semester': elm?.semester,
+            'Mobile': elm?.phone,
+            'Date': readable,
+            'College': elm?.college?.name,
+            'Payment': elm.payment
+        }
+
+        return data
+    })
 
     const total = await User.find(query).length
     // console.log(payment)
@@ -653,7 +677,7 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
         limit,
         total,
         pages: Math.ceil(total / limit),
-        data: users
+        data: filterData
     })
 })
 
