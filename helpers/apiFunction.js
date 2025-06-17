@@ -54,7 +54,7 @@ const interlibReportData = async (email, courses, token) => {
         }
         return await Promise.all(
             courses?.map(async (elm) => {
-                try{
+                try {
                     // Fetch analytics report
                     const dataResponse = await fetch('https://learn.interleap.com/api/analytics/reports', {
                         method: 'POST',
@@ -70,12 +70,12 @@ const interlibReportData = async (email, courses, token) => {
                     })
 
                     const response = await dataResponse.json()
-                    
+
                     // Early validation of API response
                     if (!response.data?.StudentProgress) {
                         return {
-                        courseName: response.data?.CourseName || 'Unknown Course',
-                        error: 'Invalid student progress data'
+                            courseName: response.data?.CourseName || 'Unknown Course',
+                            error: 'Invalid student progress data'
                         };
                     }
 
@@ -87,8 +87,8 @@ const interlibReportData = async (email, courses, token) => {
                     // Handle case where user not found in course
                     if (!user) {
                         return {
-                        courseName: response.data.CourseName || 'Unknown Course',
-                        error: 'User not enrolled in this course'
+                            courseName: response.data.CourseName || 'Unknown Course',
+                            error: 'User not enrolled in this course'
                         };
                     }
 
@@ -96,8 +96,8 @@ const interlibReportData = async (email, courses, token) => {
                     const topicDetails = user.StudentProgress.TopicDetails || [];
                     const { totalTasks, completedTasks } = topicDetails.reduce(
                         (acc, topic) => ({
-                        totalTasks: acc.totalTasks + (topic.totalTasks || 0),
-                        completedTasks: acc.completedTasks + (topic.tasksStatus?.completed || 0)
+                            totalTasks: acc.totalTasks + (topic.totalTasks || 0),
+                            completedTasks: acc.completedTasks + (topic.tasksStatus?.completed || 0)
                         }),
                         { totalTasks: 0, completedTasks: 0 }
                     );
@@ -108,13 +108,13 @@ const interlibReportData = async (email, courses, token) => {
                     //     completed = completed + elm.tasksStatus.completed
                     // })
                     // const topic = user[0].StudentProgress.TopicDetails
-                    
+
                     // Sort students by percentage to determine position
                     const allUsers = response.data.StudentProgress
-                    .map(item => item.StudentProgress?.summary)
-                    .filter(Boolean)
-                    .sort((a, b) => b.TotalPercentage - a.TotalPercentage);
-                    const position = allUsers.findIndex(item => item.StudentEmailId === email);                    
+                        .map(item => item.StudentProgress?.summary)
+                        .filter(Boolean)
+                        .sort((a, b) => b.TotalPercentage - a.TotalPercentage);
+                    const position = allUsers.findIndex(item => item.StudentEmailId === email);
                     // const position = allUsers.findIndex(item => item.StudentEmailId === email);
 
                     // const all_user = response.data.StudentProgress.map((elm) => elm.StudentProgress.summary)
@@ -133,7 +133,7 @@ const interlibReportData = async (email, courses, token) => {
                         completedTask: completedTasks,
                         topic: user.StudentProgress.TopicDetails
                     };
-                }catch(err){
+                } catch (err) {
                     // Handle individual course errors without failing the entire batch
                     console.error(`Error processing course ${elm.external_batch_id}:`, err);
                     return {
@@ -142,7 +142,7 @@ const interlibReportData = async (email, courses, token) => {
                         error: err.message || 'Failed to fetch course data'
                     };
                 }
-                })
+            })
         )
     } catch (error) {
         console.error('Failed to process report data:', error);
@@ -151,7 +151,7 @@ const interlibReportData = async (email, courses, token) => {
 }
 
 // Function for recommended course acording to their branch and semester
-const interlibRecommendedCourse = async (myCourseResponse, token, branch, semester,college) => {
+const interlibRecommendedCourse = async (myCourseResponse, token, branch, semester, college) => {
     try {
         // const allCourseResponse = await fetch('https://mindmatrix.interleap.com/api/external/courses', {
         //     method: 'GET',
@@ -179,7 +179,7 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
         // return recCourse
 
         //Optimised recommedation code
-        
+
         // Start both fetch operations in parallel
         const [allCourseResponse, recommendedCourses] = await Promise.all([
             fetch('https://mindmatrix.interleap.com/api/external/courses', {
@@ -192,14 +192,16 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
             }).then(response => response.json()),
             // Use projection to fetch only needed fields
             CourseInfo.find(
-                { course_branch: branch, course_semester: semester,
-                  $or: [
-                    { course_college: {$size: 0} },
-                    { course_college: college }
-                  ]
-                 },
-                { batch_id: 1, course_card_image: 1, _id: 0 })
+                {
+                    course_branch: branch, course_semester: semester,
+                    $or: [
+                        { course_college: { $size: 0 } },
+                        { course_college: college }
+                    ]
+                },
+                { batch_id: 1, course_card_image: 1, publishStatus: 1, _id: 0 })
         ]);
+
 
         // Early return if no data
         if (!allCourseResponse?.data || !recommendedCourses?.length) {
@@ -213,19 +215,25 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
 
         // Create a map of recommended course IDs to their images for O(1) lookup
         const recommendedCoursesMap = new Map(
-            recommendedCourses.map(course => [course.batch_id, course.course_card_image || null])
+            recommendedCourses.map(course => [course.batch_id, {
+                image: course.course_card_image || null,
+                publishStatus: course.publishStatus || null
+            }])
         );
-
         // Filter and map in a single pass
         const recCourses = allCourseResponse.data
             .filter(course => {
                 const batchId = course.external_batch_id;
                 return recommendedCoursesMap.has(batchId) && !enrolledCourseIds.has(batchId);
             })
-            .map(course => ({
-                ...course,
-                image: recommendedCoursesMap.get(course.external_batch_id)
-            }));
+            .map(course => {
+                const match = recommendedCoursesMap.get(course.external_batch_id);
+                return {
+                    ...course,
+                    image: match?.image,
+                    publishStatus: match?.publishStatus
+                };
+            });
 
         return recCourses
     } catch (error) {

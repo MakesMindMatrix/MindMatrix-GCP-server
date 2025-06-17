@@ -23,6 +23,10 @@ const courseInfoSchema = new mongoose.Schema(
     {   
         //Unique course id
         batch_id: String,
+        publishStatus: {
+            type: String,
+            enum: ['upcoming', 'recommended', 'archieve']
+        },
 
         //Batch price of the course
         batch_price: Number,
