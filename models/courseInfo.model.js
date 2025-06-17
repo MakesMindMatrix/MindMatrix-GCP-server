@@ -27,6 +27,11 @@ const courseInfoSchema = new mongoose.Schema(
             type: String,
             enum: ['upcoming', 'recommended', 'archieve']
         },
+        courseType: {
+            type: String,
+            enum: ['AEC', 'Certificate Program', 'Minor Degree']
+        },
+        courseOutline: [String],
 
         //Batch price of the course
         batch_price: Number,
@@ -90,7 +95,8 @@ const courseInfoSchema = new mongoose.Schema(
             instructor_name:String,
             instructor_image:String,
             instructor_designation: String,
-            instructor_description: String
+            instructor_description: String,
+            instructor_company_logo: String
         },
 
         curriculum_section: {
