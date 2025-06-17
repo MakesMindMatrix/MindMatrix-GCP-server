@@ -199,8 +199,9 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                         { course_college: college }
                     ]
                 },
-                { batch_id: 1, course_card_image: 1, publishStatus: 1, _id: 0 })
+                { batch_id: 1, course_card_image: 1, publishStatus: 1,courseOutline: 1, courseType: 1, instructor_section: 1, _id: 0 })
         ]);
+        console.log(recommendedCourses)
 
 
         // Early return if no data
@@ -217,9 +218,13 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
         const recommendedCoursesMap = new Map(
             recommendedCourses.map(course => [course.batch_id, {
                 image: course.course_card_image || null,
-                publishStatus: course.publishStatus || null
+                publishStatus: course.publishStatus || null,
+                courseOutline: course.courseOutline || null,
+                courseType: course.courseType || null,
+                instructor_section: course.instructor_section || null,
             }])
         );
+        // console.log(recommendedCoursesMap)
         // Filter and map in a single pass
         const recCourses = allCourseResponse.data
             .filter(course => {
@@ -231,7 +236,10 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                 return {
                     ...course,
                     image: match?.image,
-                    publishStatus: match?.publishStatus
+                    publishStatus: match?.publishStatus,
+                    courseOutline: match?.courseOutline,
+                    courseType: match?.courseType,
+                    instructor_section: match?.instructor_section,
                 };
             });
 
