@@ -66,9 +66,15 @@ exports.registerWithGoogle = asyncHandler(async (req, res, next) => {
 
 // Registration data collection with google
 exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
-    try {
-        const code = req.query.code
+    const { code, error } = req.query;
 
+    if (error) {
+        // User clicked cancel or something went wrong in OAuth
+        console.log("Google OAuth register error:", error);
+        return res.redirect(`${process.env.CLIENT_BASE_URL}/register?error=${error}`);
+    }
+    
+    try {
 
         const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, {
             params: {
@@ -387,8 +393,16 @@ exports.loginWithGoogle = asyncHandler(async (req, res, next) => {
 
 // Login data verification with google
 exports.loginWithGoogleData = asyncHandler(async (req, res, next) => {
+    const { code, error } = req.query;
 
-    const code = req.query.code;
+    if (error) {
+        // Optional: Log error for debugging
+        console.log("Google OAuth error:", error);
+
+        // Redirect user back to frontend with error message
+        return res.redirect(`${process.env.CLIENT_BASE_URL}/login?error=${error}`);
+    }
+
 
     try {
         const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, {
