@@ -229,7 +229,6 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
         const recCourses = allCourseResponse.data
             .filter(course => {
                 const batchId = course.external_batch_id;
-                console.log(batchId)
                 return recommendedCoursesMap.has(batchId) && !enrolledCourseIds.has(batchId);
             })
             .map(course => {
