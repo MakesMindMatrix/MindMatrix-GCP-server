@@ -15,7 +15,7 @@ exports.courses_Interlib = asyncHandler(async (req, res, next) => {
 
     const { college, branch, semester } = req.user
     const recCourse = await interlibRecommendedCourse(myCourseResponse, respToken.data.token, branch, semester, college)
-
+    // console.log(recCourse)
     res.status(200).json({
         myCourseResponse,
         report_data,
