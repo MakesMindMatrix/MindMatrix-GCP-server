@@ -387,8 +387,16 @@ exports.loginWithGoogle = asyncHandler(async (req, res, next) => {
 
 // Login data verification with google
 exports.loginWithGoogleData = asyncHandler(async (req, res, next) => {
+    const { code, error } = req.query;
+    
+    if (error) {
+        // Optional: Log error for debugging
+        console.log("Google OAuth error:", error);
 
-    const code = req.query.code;
+        // Redirect user back to frontend with error message
+        return res.redirect(`${process.env.CLIENT_BASE_URL}/login?error=${error}`);
+    }
+
 
     try {
         const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, {
