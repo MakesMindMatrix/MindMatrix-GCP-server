@@ -201,7 +201,7 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                 },
                 { batch_id: 1, course_card_image: 1, publishStatus: 1,courseOutline: 1, courseType: 1, instructor_section: 1, _id: 0 })
         ]);
-        console.log(recommendedCourses)
+        // console.log(recommendedCourses)
 
 
         // Early return if no data
@@ -229,6 +229,7 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
         const recCourses = allCourseResponse.data
             .filter(course => {
                 const batchId = course.external_batch_id;
+                console.log(batchId)
                 return recommendedCoursesMap.has(batchId) && !enrolledCourseIds.has(batchId);
             })
             .map(course => {
@@ -242,7 +243,7 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                     instructor_section: match?.instructor_section,
                 };
             });
-
+            // console.log(recCourses)
         return recCourses
     } catch (error) {
         console.error('Error fetching recommended courses:', error);
