@@ -153,34 +153,34 @@ const interlibReportData = async (email, courses, token) => {
 // Function for recommended course acording to their branch and semester
 const interlibRecommendedCourse = async (myCourseResponse, token, branch, semester, college) => {
     try {
-        // const allCourseResponse = await fetch('https://mindmatrix.interleap.com/api/external/courses', {
-        //     method: 'GET',
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json',
-        //         'Authorization': `Bearer ${token}`
-        //     }
-        // })
+        // Build match query: allow empty arrays or specific match
+        const matchQuery = {
+            $and: [
+                {
+                    $or: [
+                        { course_college: { $exists: false } },
+                        { course_college: { $size: 0 } },
+                        { course_college: college }
+                    ]
+                },
+                {
+                    $or: [
+                        { course_branch: { $exists: false } },
+                        { course_branch: { $size: 0 } },
+                        { course_branch: branch }
+                    ]
+                },
+                {
+                    $or: [
+                        { course_semester: { $exists: false } },
+                        { course_semester: { $size: 0 } },
+                        { course_semester: semester }
+                    ]
+                }
+            ]
+        };
 
-        // const all_course = await allCourseResponse.json()
-        // const course_branch = branch
-        // const course_semester = semester
-        // const course_college = college
-        // const rec_courses = await CourseInfo.find({ course_college, course_branch, course_semester })
-        // const allRecCourse = all_course?.data?.filter((item) => rec_courses?.some((recc) => item.external_batch_id === recc.batch_id))
-        // const recCourse = allRecCourse?.filter((item) => !myCourseResponse?.data?.some((course) => item.external_batch_id === course.external_batch_id)).map((course) => {
-        //     // Find the corresponding recommendation for the course
-        //     const matchedRec = rec_courses.find(recc => recc.batch_id === course.external_batch_id);
-        //     return {
-        //         ...course,
-        //         image: matchedRec?.course_card_image || null // attach the image if available
-        //     };
-        // });    
-        // return recCourse
-
-        //Optimised recommedation code
-
-        // Start both fetch operations in parallel
+        // Parallel fetching of course API and DB courses
         const [allCourseResponse, recommendedCourses] = await Promise.all([
             fetch('https://mindmatrix.interleap.com/api/external/courses', {
                 method: 'GET',
@@ -189,32 +189,31 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
-            }).then(response => response.json()),
-            // Use projection to fetch only needed fields
+            }).then(res => res.json()),
             CourseInfo.find(
+                matchQuery,
                 {
-                    course_branch: branch, course_semester: semester,
-                    $or: [
-                        { course_college: { $size: 0 } },
-                        { course_college: college }
-                    ]
-                },
-                { batch_id: 1, course_card_image: 1, publishStatus: 1,courseOutline: 1, courseType: 1, instructor_section: 1, _id: 0 })
+                    batch_id: 1,
+                    course_card_image: 1,
+                    publishStatus: 1,
+                    courseOutline: 1,
+                    courseType: 1,
+                    instructor_section: 1,
+                    _id: 0
+                }
+            )
         ]);
-        // console.log(recommendedCourses)
 
-
-        // Early return if no data
         if (!allCourseResponse?.data || !recommendedCourses?.length) {
             return [];
         }
 
-        // Create a Set of user's enrolled course IDs for O(1) lookup
+        // Already enrolled course IDs
         const enrolledCourseIds = new Set(
             myCourseResponse?.data?.map(course => course.external_batch_id) || []
         );
 
-        // Create a map of recommended course IDs to their images for O(1) lookup
+        // Map batch_id → metadata
         const recommendedCoursesMap = new Map(
             recommendedCourses.map(course => [course.batch_id, {
                 image: course.course_card_image || null,
@@ -224,8 +223,8 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                 instructor_section: course.instructor_section || null,
             }])
         );
-        // console.log(recommendedCoursesMap)
-        // Filter and map in a single pass
+
+        // Filter and map results
         const recCourses = allCourseResponse.data
             .filter(course => {
                 const batchId = course.external_batch_id;
@@ -242,13 +241,15 @@ const interlibRecommendedCourse = async (myCourseResponse, token, branch, semest
                     instructor_section: match?.instructor_section,
                 };
             });
-            // console.log(recCourses)
-        return recCourses
+
+        return recCourses;
+
     } catch (error) {
         console.error('Error fetching recommended courses:', error);
-        throw error;
+        return [];
     }
-}
+};
+
 
 // export default interlibToken
 
