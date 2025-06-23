@@ -109,4 +109,36 @@ exports.updateCollege = ("updateCollege", async (req, res) => {
 });
 
 // Controller for deleting college from database
-exports.deleteCollege = ("/deleteCollege", async (req, res) => { });
+exports.deleteCollege = ("/deleteCollege", async (req, res) => {
+  console.log("called")
+ });
+
+// Controller for getting list of college which has student
+exports.getCollegesWithStudents = (async (req, res) => {
+  const colleges = await College.aggregate([
+    {
+      $lookup: {
+        from: "users", // MongoDB collection name (should be lowercase plural of model)
+        localField: "_id",
+        foreignField: "college",
+        as: "students"
+      }
+    },
+    {
+      $match: {
+        "students.0": { $exists: true } // keep only colleges with at least one student
+      }
+    },
+    {
+      $project: {
+        students: 0 // exclude student data (optional)
+      }
+    }
+  ]);
+
+  res.status(200).json({
+    success: true,
+    count: colleges.length,
+    data: colleges
+  });
+})
