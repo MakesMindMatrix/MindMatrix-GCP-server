@@ -16,6 +16,7 @@
 
 const College = require("../models/college.schema");
 const University = require("../models/university.schema");
+const mongoose = require('mongoose')
 
 // Controller for create college
 exports.createCollege =
@@ -99,6 +100,53 @@ exports.readCollegeByUniversityId = ("/getCollegeByUniversity/:id", async (req, 
   }
 })
 
+// Controller for getting the list of college according to their university and if student is enrolled
+exports.readCollegeWithStudentsByUniversityId = (async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const colleges = await College.aggregate([
+      {
+        $match: {
+          universityId: new mongoose.Types.ObjectId(id)
+        }
+      },
+      {
+        $lookup: {
+          from: "users", // ensure this matches your actual MongoDB collection name
+          localField: "_id",
+          foreignField: "college",
+          as: "students"
+        }
+      },
+      {
+        $match: {
+          "students.0": { $exists: true } // keep only colleges with at least one student
+        }
+      },
+      {
+        $project: {
+          students: 0 // exclude student data from response
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      message: "College list with students fetched successfully for the given university",
+      count: colleges.length,
+      data: colleges
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch college list",
+      error: error.message
+    });
+  }
+})
+
 // Controller for updating college details
 exports.updateCollege = ("updateCollege", async (req, res) => {
   try {
@@ -109,4 +157,36 @@ exports.updateCollege = ("updateCollege", async (req, res) => {
 });
 
 // Controller for deleting college from database
-exports.deleteCollege = ("/deleteCollege", async (req, res) => { });
+exports.deleteCollege = ("/deleteCollege", async (req, res) => {
+  console.log("called")
+});
+
+// Controller for getting list of college which has student
+exports.getCollegesWithStudents = (async (req, res) => {
+  const colleges = await College.aggregate([
+    {
+      $lookup: {
+        from: "users", // MongoDB collection name (should be lowercase plural of model)
+        localField: "_id",
+        foreignField: "college",
+        as: "students"
+      }
+    },
+    {
+      $match: {
+        "students.0": { $exists: true } // keep only colleges with at least one student
+      }
+    },
+    {
+      $project: {
+        students: 0 // exclude student data (optional)
+      }
+    }
+  ]);
+
+  res.status(200).json({
+    success: true,
+    count: colleges.length,
+    data: colleges
+  });
+})

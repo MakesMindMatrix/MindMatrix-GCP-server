@@ -625,8 +625,8 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
 
     const users = await User.find({
         createdAt: {
-            $gte: new Date('2025-06-05T00:00:00.000Z'),
-            $lt: new Date('2025-06-12T00:00:00.000Z')
+            $gte: new Date('2025-06-03T00:00:00.000Z'),
+            $lt: new Date('2025-06-23T00:00:00.000Z')
         }
     }).populate("branch").populate("college").populate("university").populate("payments");
 
