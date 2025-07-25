@@ -18,9 +18,12 @@ const payment = require('./routes/payment.route')
 const slot = require('./routes/slot.route')
 const userInterest = require('./routes/userInterest.route')
 const collegeSubscription = require('./routes/collegeSubscription.route')
+const buildProfileActivity = require('./routes/buildProfileActivity.route');
+const careerShapingActivity = require('./routes/careerShapingActivity.route'); 
+const connectMentorActivity = require('./routes/connectMentorActivity.route'); 
+const chat = require('./routes/chat.route');
 
-app.use(express.json());
-app.use(cookieParser())
+
 const allowedOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
@@ -50,6 +53,8 @@ app.options('*', cors({
   credentials: true
 }));
 
+app.use(express.json());
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use("/api/v1", user)
@@ -65,6 +70,10 @@ app.use("/api/v1", slot)
 app.use("/api/v1", userInterest)
 app.use("/api/v1", collegeSubscription)
 app.use("/api/v1", noticeBoard)
+app.use("/api/v1", buildProfileActivity);
+app.use("/api/v1", careerShapingActivity);
+app.use("/api/v1", connectMentorActivity);
+app.use("/api/v1", chat);
 
 app.use(customError)
 
