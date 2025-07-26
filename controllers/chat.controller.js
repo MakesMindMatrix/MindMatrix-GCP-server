@@ -72,3 +72,22 @@ exports.createChat = asyncHandler(async (req, res, next) => {
         chatHistory: chatHistory,
     });
 });
+
+exports.getChatHistory = asyncHandler(async (req, res, next) => {
+    const { sessionId } = req.params;
+
+    if (!sessionId) {
+        return next(new ErrorHandler('Session ID is required', 400));
+    }
+
+    const chatHistory = await Chat.find({ sessionId }).sort({ createdAt: 1 });
+
+    if (chatHistory.length === 0) {
+        return next(new ErrorHandler('No chat history found for this session', 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        data: chatHistory,
+    }); 
+});
