@@ -1,7 +1,9 @@
 const express = require('express');
-const { createChat } = require('../controllers/chat.controller');
+const { createChat, getChatHistory } = require('../controllers/chat.controller');
 const router = express.Router();
 
 router.route('/create-chat').post(createChat);
+router.route('/get-chat/:sessionId').get(getChatHistory);
+
 module.exports = router;
 
