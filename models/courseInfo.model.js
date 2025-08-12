@@ -25,11 +25,11 @@ const courseInfoSchema = new mongoose.Schema(
         batch_id: String,
         publishStatus: {
             type: String,
-            enum: ['upcoming', 'recommended', 'archieve']
+            enum: ['upcoming', 'recommended', 'archieve', 'Right Vertical Section']
         },
         courseType: {
             type: String,
-            enum: ['AEC', 'Certificate Program', 'Minor Degree']
+            enum: ['AEC', 'Certificate Program', 'Minor Degree', 'Live Session', 'Talk to Mentor', 'Build Your Profile']
         },
         courseOutline: [String],
 
