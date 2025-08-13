@@ -132,6 +132,13 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
     }
 })
 
+exports.ssoLoginRegister = asyncHandler(async (req, res, next) => {
+    const { email } = req.body;
+    // Check for existing user
+    const existingUser = await User.find({ email });
+
+})
+
 
 exports.updateUser = asyncHandler(async (req, res, next) => {
     // Collect all the information from user
