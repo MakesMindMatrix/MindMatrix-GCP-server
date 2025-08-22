@@ -7,7 +7,9 @@ const sendToken = require('../utils/jwtToken')
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const sendEmailHTML = require('../utils/sendEmailHTML');
-const axios = require('axios')
+const axios = require('axios');
+const { WorkOS } =  require('@workos-inc/node');
+const workos = new WorkOS(process.env.WORKOS_API_KEY);
 
 
 // Register User
@@ -133,10 +135,38 @@ exports.registerWithGoogleData = asyncHandler(async (req, res, next) => {
 })
 
 exports.ssoLoginRegister = asyncHandler(async (req, res, next) => {
-    const { email } = req.body;
+    const authorizationUrl = workos.sso.getAuthorizationUrl({
+        clientId: process.env.WORKOS_CLIENT_ID,
+        organization: process.env.WORKOS_ORGANIZATION_ID, // for VTU
+        redirectUri: `${process.env.BASE_URL}/api/v1/auth/callback/workos`,
+    });
+    console.log(authorizationUrl);
+    res.redirect(authorizationUrl);
+    // const { email } = req.body;
     // Check for existing user
-    const existingUser = await User.find({ email });
+    // const existingUser = await User.find({ email });
 
+})
+
+exports.ssoCallback = asyncHandler(async (req, res, next) => {
+    const { code } = req.query;
+
+    try {
+        const { profile } = await workos.sso.getProfileAndToken({
+            code,
+            clientId: process.env.WORKOS_CLIENT_ID,
+        });
+    
+        // Example: VTU student details
+        console.log("VTU User Profile:", profile);
+        // Create or login user in your system
+        // e.g., findOrCreateUser(profile.email)
+        res.json({ message: "Login successful", profile });
+        res.redirect(`${process.env.CLIENT_BASE_URL}`)
+    } catch (err) {
+        console.error(err);
+        res.status(401).json({ error: "Authentication failed" });
+    }
 })
 
 
