@@ -1,4 +1,4 @@
-const HackathonRegistration = require('../models/HackathonRegistration');
+const HackathonRegistration = require('../models/hackathonRegistration.model');
 
 // Create a new registration
 exports.createRegistration = async (req, res) => {
