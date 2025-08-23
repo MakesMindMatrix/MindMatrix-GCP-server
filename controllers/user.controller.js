@@ -10,6 +10,7 @@ const sendEmailHTML = require('../utils/sendEmailHTML');
 const axios = require('axios');
 const { WorkOS } =  require('@workos-inc/node');
 const workos = new WorkOS(process.env.WORKOS_API_KEY);
+const { getClient } = require("../helpers/keycloakClient");
 
 
 // Register User
@@ -169,6 +170,39 @@ exports.ssoCallback = asyncHandler(async (req, res, next) => {
     }
 })
 
+exports.ssoLoginKeycloak = asyncHandler(async (req, res, next) => {
+    const client = await getClient();
+    const authorizationUrl = client.authorizationUrl({
+        scope: "openid profile email",
+        state: Math.random().toString(36).substring(7), // CSRF protection
+        kc_idp_hint: process.env.KEYCLOAK_IDP_HINT
+    });
+    console.log(authorizationUrl);
+    res.redirect(authorizationUrl);
+
+})
+
+exports.ssoCallbackKeyCloak = asyncHandler(async (req, res, next) => {
+    try{
+        const client = await getClient();
+
+        const params = client.callbackParams(req);
+        const tokenSet = await client.callback(
+            `${process.env.BASE_URL}/api/v1/auth/callback/keycloak`,
+            params,
+            { state: req.query.state }
+        );
+
+        const userinfo = await client.userinfo(tokenSet.access_token);
+
+        // 👉 Now you have user data from VTU IdP via Keycloak
+        console.log("Logged in user:", userinfo);
+        res.redirect(`${process.env.CLIENT_BASE_URL}`)
+    } catch (err) {
+        console.error(err);
+        res.status(401).json({ error: "Authentication failed" });
+    }
+})
 
 exports.updateUser = asyncHandler(async (req, res, next) => {
     // Collect all the information from user

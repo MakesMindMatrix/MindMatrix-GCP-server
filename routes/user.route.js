@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { registerUser, loginUser, logOut, getUserDetails, forgotPassword, resetPassword, updateUser, getAllCourses_Interlib, getStudentCourses_Interlib, enrollStudentOn_InterlibCourse, verifyUser, verifyCode, sendInvitationMail, interlibSSOLogin, leaderBoardData, getAllUser, enrolledList_Interlib, getSingleUser, deleteUser, registerWithGoogle, registerWithGoogleData, loginWithGoogle, loginWithGoogleData, ssoLoginRegister, ssoCallback } = require('../controllers/user.controller');
+const { registerUser, loginUser, logOut, getUserDetails, forgotPassword, resetPassword, updateUser, getAllCourses_Interlib, getStudentCourses_Interlib, enrollStudentOn_InterlibCourse, verifyUser, verifyCode, sendInvitationMail, interlibSSOLogin, leaderBoardData, getAllUser, enrolledList_Interlib, getSingleUser, deleteUser, registerWithGoogle, registerWithGoogleData, loginWithGoogle, loginWithGoogleData, ssoLoginRegister, ssoCallback, ssoCallbackKeyCloak, ssoLoginKeycloak } = require('../controllers/user.controller');
 const { isAuthenticated, authorizeRoles } = require('../middleware/auth');
 
 router.route("/register").post(registerUser);
@@ -8,6 +8,8 @@ router.route("/google/register").get(registerWithGoogle);
 router.route("/google/register/callback").get(registerWithGoogleData);
 router.route("/ssoLogin").get(ssoLoginRegister)
 router.route("/auth/callback/workos").get(ssoCallback)
+router.route("/ssoLoginKeycloak").get(ssoLoginKeycloak)
+router.route("/auth/callback/keycloak").get(ssoCallbackKeyCloak)
 router.route('/updateUser').post(updateUser)
 router.route("/login").post(loginUser);
 router.route("/google/login").get(loginWithGoogle);
