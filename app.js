@@ -22,6 +22,7 @@ const buildProfileActivity = require('./routes/buildProfileActivity.route');
 const careerShapingActivity = require('./routes/careerShapingActivity.route'); 
 const connectMentorActivity = require('./routes/connectMentorActivity.route'); 
 const chat = require('./routes/chat.route');
+const hackathon = require('./routes/hackathon.route')
 
 
 const allowedOrigins = [
@@ -74,6 +75,7 @@ app.use("/api/v1", buildProfileActivity);
 app.use("/api/v1", careerShapingActivity);
 app.use("/api/v1", connectMentorActivity);
 app.use("/api/v1", chat);
+app.use("/api/v1", hackathon);
 
 app.use(customError)
 
