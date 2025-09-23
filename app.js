@@ -4,6 +4,7 @@ const cors = require("cors")
 const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser")
 const customError = require('./middleware/error')
+const { initPassport } = require('./controllers/saml.controller')
 
 const user = require('./routes/user.route');
 const branch = require('./routes/branch.route')
@@ -57,6 +58,7 @@ app.options('*', cors({
 app.use(express.json());
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }))
+initPassport(app)
 
 app.use("/api/v1", user)
 app.use("/api/v1", college)
