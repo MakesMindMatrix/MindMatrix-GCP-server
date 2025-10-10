@@ -1,0 +1,20 @@
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" validUntil="2027-01-20T19:04:25Z" cacheDuration="PT1485371065S" entityID="https://betaonline.vtu.ac.in/saml/metadata">
+<md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+<md:KeyDescriptor use="signing">
+<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ds:X509Data>
+<ds:X509Certificate>MIICsDCCAZgCCQCm6ZO2aDIwUDANBgkqhkiG9w0BAQsFADAaMQswCQYDVQQGEwJJTjELMAkGA1UECAwCS0EwHhcNMjQwMTMxMTYwNDM3WhcNNDQwMTI2MTYwNDM3WjAaMQswCQYDVQQGEwJJTjELMAkGA1UECAwCS0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDEgMxUBBFQ9ONN6RSDImDM7Q/il5Ih21WU99souEJh0CD+SdZB9sLMsUOuu965LzmusSiynmi/W6brJDVzA5p7bKojbeLPcW7axdcTPKTSnr4zt2h54+p8U33AA3J2pXHv2wo19xb/ls2LlGA42EInkqj8B+vZkTbK2DMB02Zy/w3TlypF9CLdD83M2AlIxOqKsVfaAxkYMCsfmMNhiAV7L0nG+vQCaQA4oOnZ+QVpU0vz5jy2lGN+YRPzp5DG6GCG8KgTnSZ1R5wM6vgg5Wd/boBZhWw5h6sYxT70fPMid8g/gAy2Pis9Ltm/Yh5fn/191D0CR3DjFS06SVmRlc5TAgMBAAEwDQYJKoZIhvcNAQELBQADggEBALCbQabtBmgoQq6oZTK3+AKtLDxS6zt6+1c7nBwWhUHzViz2PR6jUSHawd6ZFnp01/25gEM9SBySLujgFSPEvU5I8bsPMQmz5ksrWg1j0ZbGXSVKAJCEkrvqzq12OqJpSzlfpspMZbrRPNgMqHcwvYnjHYPym9ORWr1bKVlTcUW7D6FV5jx1hsSMJ162mZeS53B9fabwj16128MMpxG1WgY3aTI3WQeQib7IKPN7kJdF/e+EhxMwC1lah7OqJepl7YDqNsmB9SP3GzDl8CPVv8t4bt+XR4H/GWFiWDEQq97aWCEE/4aCFPqlV+wG1T4iNUYsqCVq1aXPLOTH7mezhNg=</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+</md:KeyDescriptor>
+<md:KeyDescriptor use="encryption">
+<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ds:X509Data>
+<ds:X509Certificate>MIICsDCCAZgCCQCm6ZO2aDIwUDANBgkqhkiG9w0BAQsFADAaMQswCQYDVQQGEwJJTjELMAkGA1UECAwCS0EwHhcNMjQwMTMxMTYwNDM3WhcNNDQwMTI2MTYwNDM3WjAaMQswCQYDVQQGEwJJTjELMAkGA1UECAwCS0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDEgMxUBBFQ9ONN6RSDImDM7Q/il5Ih21WU99souEJh0CD+SdZB9sLMsUOuu965LzmusSiynmi/W6brJDVzA5p7bKojbeLPcW7axdcTPKTSnr4zt2h54+p8U33AA3J2pXHv2wo19xb/ls2LlGA42EInkqj8B+vZkTbK2DMB02Zy/w3TlypF9CLdD83M2AlIxOqKsVfaAxkYMCsfmMNhiAV7L0nG+vQCaQA4oOnZ+QVpU0vz5jy2lGN+YRPzp5DG6GCG8KgTnSZ1R5wM6vgg5Wd/boBZhWw5h6sYxT70fPMid8g/gAy2Pis9Ltm/Yh5fn/191D0CR3DjFS06SVmRlc5TAgMBAAEwDQYJKoZIhvcNAQELBQADggEBALCbQabtBmgoQq6oZTK3+AKtLDxS6zt6+1c7nBwWhUHzViz2PR6jUSHawd6ZFnp01/25gEM9SBySLujgFSPEvU5I8bsPMQmz5ksrWg1j0ZbGXSVKAJCEkrvqzq12OqJpSzlfpspMZbrRPNgMqHcwvYnjHYPym9ORWr1bKVlTcUW7D6FV5jx1hsSMJ162mZeS53B9fabwj16128MMpxG1WgY3aTI3WQeQib7IKPN7kJdF/e+EhxMwC1lah7OqJepl7YDqNsmB9SP3GzDl8CPVv8t4bt+XR4H/GWFiWDEQq97aWCEE/4aCFPqlV+wG1T4iNUYsqCVq1aXPLOTH7mezhNg=</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+</md:KeyDescriptor>
+<md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+<md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://betaonline.vtu.ac.in/saml/login"/>
+</md:IDPSSODescriptor>
+</md:EntityDescriptor>

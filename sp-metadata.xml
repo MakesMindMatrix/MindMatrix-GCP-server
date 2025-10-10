@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://second-brain-backend-416303935037.asia-northeast1.run.app/api/v1/saml" ID="https___second_brain_backend_416303935037_asia_northeast1_run_app_api_v1_saml">
+  <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <KeyDescriptor use="signing">
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>MIIDtTCCAp2gAwIBAgIUUnzz1E+XCkfyFAafP4MEONYlqIkwDQYJKoZIhvcNAQEL
+BQAwajELMAkGA1UEBhMCSU4xCzAJBgNVBAgMAktBMRMwEQYDVQQKDApNaW5kTWF0
+cml4MRAwDgYDVQQDDAdWVFUgU1NPMScwJQYJKoZIhvcNAQkBFhhtaW5kbWF0cml4
+QG1pbmRtYXRyaXguaW8wHhcNMjUwOTE4MDczNDAzWhcNMjYwOTE4MDczNDAzWjBq
+MQswCQYDVQQGEwJJTjELMAkGA1UECAwCS0ExEzARBgNVBAoMCk1pbmRNYXRyaXgx
+EDAOBgNVBAMMB1ZUVSBTU08xJzAlBgkqhkiG9w0BCQEWGG1pbmRtYXRyaXhAbWlu
+ZG1hdHJpeC5pbzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAL4oGyl6
+7igrFyPdtFgN8jiRoWtiS8HS8BtqyHhTqxx3lfYy6CIwME51WLDrk45z6gCULsEM
+OdGycNVxJVvAWGQ2HJ6LKB2TowRU8Hx+Q/EHpSLAGxeb9eQPbQayGevaUT+ch1PI
+ol+PR/KCyg6H0ECN30QYlgBv65yC6UISUVbXmWaZ59OaG0y0HyfM5hdaKi5vKIQF
+ZqPZ1v32uRsN4eAspLCZxxvqa4mzt+Q2xaQuxNaypVCEL/m10BMBLKGGjljB4RZC
+FeRexb8AVKnUnFws+RvpDAbt1vSNbt5HBkIU+SJddeLgQb0zI2hDckX4h052bQhQ
+tM0IdjJeFso+57ECAwEAAaNTMFEwHQYDVR0OBBYEFKuv9qD1cNTtzVsPNPaKEEoy
+ToD9MB8GA1UdIwQYMBaAFKuv9qD1cNTtzVsPNPaKEEoyToD9MA8GA1UdEwEB/wQF
+MAMBAf8wDQYJKoZIhvcNAQELBQADggEBAHktAK0bfiHWGrcBoLOxWVEjvExQSiUj
+d+WBQos4Qz9swZaOLWSwbIWwu6KLtYhzag4mBmuGFDRRoCyXL607rw609abTKPy7
+7sskkp+uADVgw2yB1/+c5+Ohnxfoq3WglYvpGCSjamqMVCK3K9kO3Q1Ve2LZU37Z
+n3S+MVOfs0amXjpsy5AA7DQT5W92mQft99xZZ+y0Qsw/hOVHUuXLQa72WBl0krXi
+Zeqh4UM5v30yxDeJRILZNO3Y/yyF59SnON9XiAE8wskCk0bYsTIbMfvJHVpt4zpg
+/9ut5cE+B1yGlDKhTvjSDg+myz2z6dbbdqW7tFb4ibzAr+xx4HT28dE=
+</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </KeyDescriptor>
+    <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+    <AssertionConsumerService index="1" isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://second-brain-backend-416303935037.asia-northeast1.run.app/api/v1/saml/acs"/>
+  </SPSSODescriptor>
+</EntityDescriptor>

@@ -89,7 +89,9 @@ exports.readCollege = ("/getCollege", async (req, res) => {
 exports.readCollegeByUniversityId = ("/getCollegeByUniversity/:id", async (req, res) => {
   try {
     const { id } = req.params
+    console.log(id)
     const collegeList = await College.find({ universityId: id }).populate('universityId')
+    console.log(collegeList)
     res.status(200).json({
       success: true,
       message: "All college list fetched succesfully by their university",
